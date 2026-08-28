@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getSortedPosts } from '../../lib/posts';
+import { formatDate } from '../../lib/format';
+
+const posts = await getSortedPosts();
+---
+
+<Base title="文章 — laoliu" description="全部博客文章">
+  <h1>文章</h1>
+  <ul class="post-list">
+    {
+      posts.map((post) => (
+        <li>
+          <time datetime={post.data.pubDate.toISOString()}>
+            {formatDate(post.data.pubDate)}
+          </time>
+          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          <p class="desc">{post.data.description}</p>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

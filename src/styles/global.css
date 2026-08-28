@@ -1,0 +1,232 @@
+/* 极简黑白灰排版：单一字体栈、克制的间距、无装饰 */
+:root {
+  --text: #1a1a1a;
+  --text-muted: #6b6b6b;
+  --line: #e5e5e5;
+  --bg: #fff;
+  --max-width: 42rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.75;
+}
+
+body {
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  max-width: var(--max-width);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+  padding: 2rem 0 4rem;
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+
+a:hover {
+  border-bottom-color: var(--text);
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.3;
+}
+
+/* 站点头尾 */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.site-title {
+  font-weight: 700;
+  border-bottom: none;
+}
+
+.site-header nav a {
+  margin-left: 1.25rem;
+  border-bottom: none;
+  color: var(--text-muted);
+}
+
+.site-header nav a:hover {
+  color: var(--text);
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.site-footer a {
+  margin-left: 1rem;
+  border-bottom: none;
+}
+
+/* 首页 */
+.hero h1 {
+  font-size: 2rem;
+  margin: 3rem 0 0.5rem;
+}
+
+.hero .bio {
+  color: var(--text-muted);
+  font-size: 1.125rem;
+  margin: 0 0 1rem;
+}
+
+.hero .links {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 3rem;
+}
+
+.hero .links li {
+  display: inline;
+  margin-right: 1.25rem;
+}
+
+section h2 {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 2.5rem 0 1rem;
+}
+
+/* 列表（文章、项目共用骨架） */
+.post-list,
+.project-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.post-list li {
+  margin-bottom: 1.25rem;
+}
+
+.post-list time {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  display: block;
+}
+
+.post-list a {
+  font-size: 1.0625rem;
+  border-bottom: none;
+}
+
+.post-list a:hover {
+  text-decoration: underline;
+}
+
+/* 项目卡片 */
+.project-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.project-list li {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+}
+
+.project-list a {
+  border-bottom: none;
+  font-weight: 600;
+}
+
+.project-list .desc {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  margin: 0.5rem 0;
+}
+
+.project-list .meta {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* 文章页 */
+.article-header time {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.article-body img {
+  max-width: 100%;
+}
+
+.article-body pre {
+  background: #f6f6f6;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
+
+.article-body code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.875em;
+}
+
+.article-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.article-body blockquote {
+  border-left: 3px solid var(--line);
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: var(--text-muted);
+}
+
+.article-body table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9375rem;
+}
+
+.article-body th,
+.article-body td {
+  border: 1px solid var(--line);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+@media (max-width: 30rem) {
+  .project-list {
+    grid-template-columns: 1fr;
+  }
+}

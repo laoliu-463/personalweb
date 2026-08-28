@@ -1,0 +1,30 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getProjects } from '../../lib/projects';
+import { formatDate } from '../../lib/format';
+
+const projects = await getProjects();
+---
+
+<Base title="项目 — laoliu" description="GitHub 上的开源项目">
+  <h1>项目</h1>
+  <p class="desc">
+    构建时自动从 <a href="https://github.com/laoliu-463">GitHub</a> 拉取，fork 仓库不展示。
+  </p>
+  <ul class="project-list">
+    {
+      projects.map((project) => (
+        <li>
+          <a href={project.url}>{project.name}</a>
+          {project.description && <p class="desc">{project.description}</p>}
+          <p class="meta">
+            {project.language && <span>{project.language}</span>}
+            {project.stars > 0 && <span>★ {project.stars}</span>}
+            {project.homepage && <a href={project.homepage}>主页</a>}
+            <span>{formatDate(project.updatedAt)}</span>
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

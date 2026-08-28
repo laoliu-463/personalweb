@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import { getSortedPosts } from '../lib/posts';
+import { getFeaturedProjects } from '../lib/projects';
+import { formatDate } from '../lib/format';
+
+const posts = (await getSortedPosts()).slice(0, 5);
+const projects = await getFeaturedProjects(4);
+---
+
+<Base title="laoliu — 个人网站">
+  <section class="hero">
+    <h1>Lao Liu</h1>
+    <p class="bio">写代码，做东西。这里是文章和项目的自留地。</p>
+    <ul class="links">
+      <li><a href="https://github.com/laoliu-463">GitHub</a></li>
+      <li><a href="/rss.xml">RSS</a></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>精选项目</h2>
+    <ul class="project-list">
+      {
+        projects.map((project) => (
+          <li>
+            <a href={project.url}>{project.name}</a>
+            <p class="desc">{project.description}</p>
+            <p class="meta">
+              {project.language && <span>{project.language}</span>}
+              {project.stars > 0 && <span>★ {project.stars}</span>}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+    <p><a href="/projects/">全部项目 →</a></p>
+  </section>
+
+  <section>
+    <h2>最新文章</h2>
+    <ul class="post-list">
+      {
+        posts.map((post) => (
+          <li>
+            <time datetime={post.data.pubDate.toISOString()}>
+              {formatDate(post.data.pubDate)}
+            </time>
+            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <p><a href="/blog/">全部文章 →</a></p>
+  </section>
+</Base>

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "fork-repo",
+    "description": "这是一个 fork",
+    "html_url": "https://github.com/laoliu-463/fork-repo",
+    "stargazers_count": 999,
+    "pushed_at": "2026-08-01T00:00:00Z",
+    "fork": true,
+    "language": "Java",
+    "homepage": null
+  },
+  {
+    "name": "low-stars-fresh",
+    "description": null,
+    "html_url": "https://github.com/laoliu-463/low-stars-fresh",
+    "stargazers_count": 0,
+    "pushed_at": "2026-08-20T00:00:00Z",
+    "fork": false,
+    "language": null,
+    "homepage": ""
+  },
+  {
+    "name": "mid-stars",
+    "description": "中等 star 数",
+    "html_url": "https://github.com/laoliu-463/mid-stars",
+    "stargazers_count": 3,
+    "pushed_at": "2026-01-01T00:00:00Z",
+    "fork": false,
+    "language": "TypeScript",
+    "homepage": "https://example.com/"
+  },
+  {
+    "name": "top-stars-stale",
+    "description": "star 最多但很久没更新",
+    "html_url": "https://github.com/laoliu-463/top-stars-stale",
+    "stargazers_count": 10,
+    "pushed_at": "2024-01-01T00:00:00Z",
+    "fork": false,
+    "language": "Rust",
+    "homepage": null
+  },
+  {
+    "name": "tie-with-top",
+    "description": "与 top-stars-stale 同为 10 star，更新更晚",
+    "html_url": "https://github.com/laoliu-463/tie-with-top",
+    "stargazers_count": 10,
+    "pushed_at": "2025-06-01T00:00:00Z",
+    "fork": false,
+    "language": "Go",
+    "homepage": null
+  }
+]
