@@ -50,3 +50,16 @@ export async function getFeaturedProjects(limit = 4): Promise<RepoInfo[]> {
   }
   return picked;
 }
+
+/** 将 GitHub RepoInfo 映射为 ProjectCard 所需的格式 */
+export function mapRepoToCard(repo: RepoInfo, index: number) {
+  return {
+    index,
+    title: repo.name,
+    description: repo.description,
+    tags: repo.language ? [repo.language] : [],
+    github: repo.url,
+    demo: repo.homepage || undefined,
+    year: new Date(repo.updatedAt).getFullYear().toString(),
+  };
+}

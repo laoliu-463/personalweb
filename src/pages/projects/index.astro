@@ -1,9 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { getLocalProjects } from '../../lib/projects';
+import { getProjects, mapRepoToCard } from '../../lib/projects';
 
-const projects = await getLocalProjects();
+const repos = await getProjects();
+const projects = repos.map((repo, i) => mapRepoToCard(repo, i + 1));
 ---
 
 <Base title="作品集 — 雾隐 · Lao Liu" description="2019 — 2026 年间的代码实验与系统工程">
@@ -15,14 +16,15 @@ const projects = await getLocalProjects();
 
     <div class="work-list">
       {
-        projects.map((proj, idx) => (
+        projects.map((proj) => (
           <ProjectCard
-            index={idx + 1}
-            title={proj.data.title}
-            description={proj.data.description}
-            tags={proj.data.tags}
-            github={proj.data.github}
-            demo={proj.data.demo}
+            index={proj.index}
+            title={proj.title}
+            description={proj.description}
+            tags={proj.tags}
+            github={proj.github}
+            demo={proj.demo}
+            year={proj.year}
           />
         ))
       }

@@ -2,13 +2,14 @@
 import Base from '../layouts/Base.astro';
 import BlogCard from '../components/BlogCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import { getFeaturedProjects, mapRepoToCard } from '../lib/projects';
 import { getSortedPosts } from '../lib/posts';
-import { getFeaturedLocalProjects } from '../lib/projects';
 import { getSortedNotes } from '../lib/notes';
 import { render } from 'astro:content';
 
 const posts = (await getSortedPosts()).slice(0, 4);
-const featuredProjects = await getFeaturedLocalProjects(4);
+const featuredRepos = await getFeaturedProjects(4);
+const featuredProjects = featuredRepos.map((repo, i) => mapRepoToCard(repo, i + 1));
 const rawNotes = (await getSortedNotes()).slice(0, 3);
 const notes = await Promise.all(
   rawNotes.map(async (note) => {
