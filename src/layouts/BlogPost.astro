@@ -1,0 +1,188 @@
+---
+import Base from './Base.astro';
+import { formatDate } from '../lib/format';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date | undefined;
+  category?: string | undefined;
+  tags?: string[] | undefined;
+  mood?: string | undefined;
+  headings?: { depth: number; slug: string; text: string }[] | undefined;
+}
+
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  category,
+  tags = [],
+  mood,
+  headings = [],
+} = Astro.props;
+
+// 筛选出 h2, h3 作为目录
+const toc = headings ? headings.filter((h) => h.depth >= 2 && h.depth <= 3) : [];
+---
+
+<Base title={`${title} — Lao Liu`} description={description}>
+  <div class="max-w-3xl">
+    <!-- 返回导航 -->
+    <div class="mb-8">
+      <a href="/blog" class="mel-link inline-flex items-center gap-2 text-xs font-mono text-[#8a8498] hover:text-[#d4a373]">
+        <span>←</span>
+        <span>RETURN_TO_ARCHIVE</span>
+      </a>
+    </div>
+
+    <!-- 文章头信息 -->
+    <header class="mb-10 pb-6 border-b border-[#24212e]">
+      <div class="flex flex-wrap items-center gap-3 text-xs font-mono text-[#767084] mb-4">
+        <time datetime={pubDate.toISOString()} class="text-[#9690a4]">
+          {formatDate(pubDate)}
+        </time>
+        {category && (
+          <>
+            <span class="text-[#363242]">/</span>
+            <span class="text-[#b4afc2]">{category}</span>
+          </>
+        )}
+        {updatedDate && (
+          <>
+            <span class="text-[#363242]">/</span>
+            <span class="text-[#645e72]">修改于 {formatDate(updatedDate)}</span>
+          </>
+        )}
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif text-[#ebe7f4] leading-tight mb-4 tracking-wide font-medium">
+        {title}
+      </h1>
+
+      {mood && (
+        <div class="inline-block px-3 py-1 rounded-xs bg-[#1d1b26] border border-[#2e2a3c] text-xs font-mono text-[#d4a373]">
+          心境坐标：{mood}
+        </div>
+      )}
+    </header>
+
+    <!-- 目录 TOC（如有） -->
+    {toc.length > 0 && (
+      <nav class="my-8 p-4 sm:p-5 rounded-sm mel-card text-xs font-mono">
+        <div class="text-[#847e92] mb-3 font-semibold tracking-wider">// TABLE_OF_CONTENTS</div>
+        <ul class="space-y-1.5">
+          {toc.map((item) => (
+            <li class={item.depth === 3 ? 'ml-4' : ''}>
+              <a href={`#${item.slug}`} class="text-[#9892a6] hover:text-[#d4a373] transition-colors">
+                # {item.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
+    <!-- 正文内容：加大行距、温润衬线 -->
+    <article class="font-sans text-base text-[#bbb5c8] leading-loose space-y-6 article-prose">
+      <slot />
+    </article>
+
+    <!-- 文章尾注与标签 -->
+    <div class="mt-16 pt-8 border-t border-[#24212e] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {tags && tags.length > 0 && (
+        <div class="flex flex-wrap gap-2 text-xs font-mono">
+          {tags.map((tag) => (
+            <span class="px-2 py-0.5 bg-[#1a1824] border border-[#272434] text-[#868095]">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div class="handwriting-accent text-sm select-none">
+        the rain has paused for a moment.
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style is:global>
+  .article-prose h2 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    color: #ebe7f4;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #24212e;
+  }
+  .article-prose h3 {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: #d6d1e2;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .article-prose p {
+    margin-bottom: 1.5rem;
+  }
+  .article-prose blockquote {
+    border-left: 2px solid #d4a373;
+    background: rgba(28, 25, 36, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 0.75rem 1.25rem;
+    color: #a29caf;
+    font-style: italic;
+    margin: 2rem 0;
+  }
+  .article-prose code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: #1e1c28;
+    color: #d4a373;
+    padding: 0.15rem 0.35rem;
+    border-radius: 2px;
+    border: 1px solid #2e2a3c;
+  }
+  .article-prose pre {
+    background: #141318 !important;
+    border: 1px solid #24212e;
+    padding: 1.25rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 2rem 0;
+  }
+  .article-prose pre code {
+    background: transparent;
+    border: none;
+    color: #c4bfd2;
+    padding: 0;
+  }
+  .article-prose ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .article-prose li {
+    margin-bottom: 0.5rem;
+  }
+  .article-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    font-size: 0.875rem;
+  }
+  .article-prose th,
+  .article-prose td {
+    border: 1px solid #24212e;
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+  .article-prose th {
+    background: #1a1824;
+    color: #d6d1e2;
+  }
+</style>

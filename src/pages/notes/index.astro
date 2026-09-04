@@ -1,0 +1,38 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import NoteCard from '../../components/NoteCard.astro';
+import { getSortedNotes } from '../../lib/notes';
+
+const rawNotes = await getSortedNotes();
+const renderedNotes = await Promise.all(
+  rawNotes.map(async (note) => {
+    const { Content } = await render(note);
+    return { note, Content };
+  })
+);
+---
+
+<Base title="片段与随笔 — 雾隐 · Lao Liu" description="写在潮湿窗前的即兴短语与微弱温度">
+  <div class="max-w-4xl">
+    <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-12">
+      <h1 class="font-serif text-4xl font-normal text-[#e5e3dc]">片段</h1>
+      <span class="text-xs font-mono text-[#8c8d93]">未发表的句子</span>
+    </div>
+
+    <div class="frag-track space-y-12">
+      {
+        renderedNotes.map(({ note, Content }) => (
+          <NoteCard
+            title={note.data.title}
+            pubDate={note.data.pubDate}
+            mood={note.data.mood}
+            tags={note.data.tags}
+          >
+            <Content />
+          </NoteCard>
+        ))
+      }
+    </div>
+  </div>
+</Base>

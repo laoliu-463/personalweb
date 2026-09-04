@@ -1,0 +1,55 @@
+---
+import { formatDate } from '../lib/format';
+
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+  category?: string | undefined;
+  tags?: string[] | undefined;
+  mood?: string | undefined;
+}
+
+const { id, title, description, pubDate, category, tags = [], mood } = Astro.props;
+---
+
+<article class="mel-card p-6 sm:p-8 rounded-none relative group overflow-hidden border-b border-[rgba(229,227,220,0.12)]">
+  <div class="flex flex-wrap items-center gap-3 text-xs font-mono text-[#8c8d93] mb-3">
+    <time datetime={pubDate.toISOString()} class="text-[#8c8d93]">
+      {formatDate(pubDate)}
+    </time>
+    {category && (
+      <>
+        <span class="text-[rgba(229,227,220,0.2)]">/</span>
+        <span>{category}</span>
+      </>
+    )}
+    {mood && (
+      <>
+        <span class="text-[rgba(229,227,220,0.2)]">/</span>
+        <span class="font-serif italic text-[#e5e3dc]">
+          {mood}
+        </span>
+      </>
+    )}
+  </div>
+
+  <h3 class="text-xl sm:text-2xl font-serif text-[#e5e3dc] group-hover:text-white transition-colors mb-3 leading-snug font-normal">
+    <a href={`/blog/${id}/`} class="focus:outline-none">
+      {title}
+    </a>
+  </h3>
+
+  <p class="text-xs sm:text-sm text-[#8c8d93] font-sans leading-relaxed line-clamp-2 mb-5">
+    {description}
+  </p>
+
+  {tags && tags.length > 0 && (
+    <div class="flex flex-wrap gap-2 text-[11px] font-mono text-[#646873]">
+      {tags.map((tag) => (
+        <span>#{tag}</span>
+      ))}
+    </div>
+  )}
+</article>

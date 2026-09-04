@@ -1,56 +1,138 @@
 ---
 import Base from '../layouts/Base.astro';
+import BlogCard from '../components/BlogCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import { getSortedPosts } from '../lib/posts';
-import { getFeaturedProjects } from '../lib/projects';
-import { formatDate } from '../lib/format';
+import { getFeaturedLocalProjects } from '../lib/projects';
+import { getSortedNotes } from '../lib/notes';
+import { render } from 'astro:content';
 
-const posts = (await getSortedPosts()).slice(0, 5);
-const projects = await getFeaturedProjects(4);
+const posts = (await getSortedPosts()).slice(0, 4);
+const featuredProjects = await getFeaturedLocalProjects(4);
+const rawNotes = (await getSortedNotes()).slice(0, 3);
+const notes = await Promise.all(
+  rawNotes.map(async (note) => {
+    const { Content } = await render(note);
+    return { note, Content };
+  })
+);
 ---
 
-<Base title="laoliu — 个人网站">
-  <section class="hero">
-    <h1>Lao Liu</h1>
-    <p class="bio">写代码，做东西。这里是文章和项目的自留地。</p>
-    <ul class="links">
-      <li><a href="https://github.com/laoliu-463">GitHub</a></li>
-      <li><a href="/rss.xml">RSS</a></li>
-    </ul>
+<Base title="雾隐 · Lao Liu — 潮湿光线里的代码与文字">
+  <!-- Hero 区块：在潮湿的光线里 -->
+  <section class="hero -mt-28 min-h-[90vh] flex flex-col justify-end relative pb-16">
+    <div class="grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] items-end gap-10">
+      <!-- 左侧主标题 -->
+      <div class="hero-left">
+        <div class="hero-eyebrow font-mono text-xs text-[#8c8d93] mb-7">
+          代码与随笔 · 2018 — 至今
+        </div>
+        <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl leading-tight font-normal text-[#e5e3dc] tracking-tight">
+          在潮湿的<br />
+          光线里
+          <span class="block text-sm font-sans font-light text-[#8c8d93] mt-6 tracking-normal">
+            Code, Photography & Prose, in low light
+          </span>
+        </h1>
+      </div>
+
+      <!-- 右侧诗意名言与向下滑动 -->
+      <div class="hero-right flex flex-col md:items-end gap-5">
+        <p class="hero-quote max-w-[320px] md:text-right font-serif italic text-lg text-[#8c8d93] leading-relaxed border-l md:border-l-0 md:border-r border-[rgba(229,227,220,0.12)] pl-4 md:pl-0 md:pr-5">
+          "代码是搭建秩序的工具，而文字与风光是留存温度的容器。"
+        </p>
+      </div>
+    </div>
+
+    <!-- 向下指示 -->
+    <div class="scroll-hint mt-16 flex items-center gap-3.5 text-xs text-[#8c8d93]">
+      <span>向下浏览</span>
+      <div class="w-[1px] h-10 bg-gradient-to-b from-[#8c8d93] to-transparent animate-pulse"></div>
+    </div>
   </section>
 
-  <section>
-    <h2>精选项目</h2>
-    <ul class="project-list">
+  <!-- 作品集列表 (Works) -->
+  <section class="works py-20" id="works">
+    <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-10">
+      <h2 class="font-serif text-3xl font-normal text-[#e5e3dc]">作品集</h2>
+      <span class="text-xs font-mono text-[#8c8d93]">2019 — 2026</span>
+    </div>
+
+    <div class="work-list">
       {
-        projects.map((project) => (
-          <li>
-            <a href={project.url}>{project.name}</a>
-            <p class="desc">{project.description}</p>
-            <p class="meta">
-              {project.language && <span>{project.language}</span>}
-              {project.stars > 0 && <span>★ {project.stars}</span>}
-            </p>
-          </li>
+        featuredProjects.map((project, idx) => (
+          <ProjectCard
+            index={idx + 1}
+            title={project.data.title}
+            description={project.data.description}
+            tags={project.data.tags}
+            github={project.data.github}
+            demo={project.data.demo}
+          />
         ))
       }
-    </ul>
-    <p><a href="/projects/">全部项目 →</a></p>
+    </div>
   </section>
 
-  <section>
-    <h2>最新文章</h2>
-    <ul class="post-list">
+  <!-- 沉淀的文字 (Latest Writings) -->
+  <section class="py-20">
+    <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-10">
+      <h2 class="font-serif text-3xl font-normal text-[#e5e3dc]">沉淀的文字</h2>
+      <a href="/blog" class="mel-link text-xs font-mono text-[#8c8d93] hover:text-[#e5e3dc]">
+        全部文章 →
+      </a>
+    </div>
+
+    <div class="space-y-4">
       {
         posts.map((post) => (
-          <li>
-            <time datetime={post.data.pubDate.toISOString()}>
-              {formatDate(post.data.pubDate)}
-            </time>
-            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-          </li>
+          <BlogCard
+            id={post.id}
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            category={post.data.category}
+            tags={post.data.tags}
+            mood={post.data.mood}
+          />
         ))
       }
-    </ul>
-    <p><a href="/blog/">全部文章 →</a></p>
+    </div>
+  </section>
+
+  <!-- 随笔片段 (Fragments) -->
+  <section class="fragments py-20 bg-[#191a20] -mx-6 px-6 sm:-mx-12 sm:px-12 md:-mx-20 md:px-20 rounded-2xl">
+    <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-12">
+      <h2 class="font-serif text-3xl font-normal text-[#e5e3dc]">片段</h2>
+      <span class="text-xs font-mono text-[#8c8d93]">未发表的即兴句子</span>
+    </div>
+
+    <div class="frag-track space-y-12">
+      {
+        notes.map(({ note, Content }) => (
+          <div class="frag">
+            <span class="frag-mark">"</span>
+            <div class="space-y-2">
+              <div class="text-base sm:text-xl font-serif italic text-[#e5e3dc] leading-relaxed">
+                <Content />
+              </div>
+              <div class="text-xs font-mono text-[#8c8d93] pt-2">
+                — {note.data.mood || '写于某次静谧夜里'}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 联系专区 (Contact) -->
+  <section class="contact text-center pt-24 pb-16">
+    <h2 class="font-serif font-normal text-3xl sm:text-5xl max-w-xl mx-auto mb-10 text-[#e5e3dc] leading-snug">
+      如果你也在某个潮湿的夜里想起了什么，写信给我
+    </h2>
+    <a class="contact-link inline-block text-sm sm:text-base text-[#8c8d93] border-b border-[rgba(229,227,220,0.12)] pb-2 hover:text-[#e5e3dc] hover:border-[#e5e3dc] transition-all" href="mailto:hello@wuyin.studio">
+      hello@wuyin.studio
+    </a>
   </section>
 </Base>

@@ -1,0 +1,139 @@
+---
+// 《雾隐·陈墨》动态山雾月影与细雨景观组件
+---
+
+<div id="scenery-canvas-wrapper" transition:persist="scenery-canvas" class="fixed inset-0 pointer-events-none z-[0] overflow-hidden" aria-hidden="true">
+  <!-- 底色与背景渐变 -->
+  <div class="hero-landscape-wrapper">
+    <!-- 沉香紫红雾晕 -->
+    <div class="hero-fog"></div>
+
+    <!-- 柔光脉动静谧月影 -->
+    <div class="moon"></div>
+
+    <!-- 三重山峦剪影 -->
+    <div class="hills hills-back"></div>
+    <div class="hills hills-mid"></div>
+
+    <!-- 双层无缝漂移山雾 -->
+    <div class="fog-layer fog-1"></div>
+    <div class="fog-layer fog-2"></div>
+
+    <!-- 前景近山剪影 -->
+    <div class="hills hills-front"></div>
+
+    <!-- 细雨雨丝叠层 -->
+    <div class="rain-overlay"></div>
+  </div>
+
+  <!-- Canvas 渲染补充气象粒子 -->
+  <canvas id="scenery-canvas" class="w-full h-full block absolute inset-0"></canvas>
+</div>
+
+<script>
+  import { isSceneryMode, prefersReducedMotion, type SceneryMode } from '../lib/scenery';
+
+  function initSceneryCanvas() {
+    const canvas = document.getElementById('scenery-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    if ((window as any).__SCENERY_CANVAS_INITIALIZED__) return;
+    (window as any).__SCENERY_CANVAS_INITIALIZED__ = true;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+    let reduceMotion = prefersReducedMotion();
+    let rafId = 0;
+
+    function resize() {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize, { passive: true });
+
+    const attr = document.documentElement.getAttribute('data-scenery');
+    let currentMode: SceneryMode = isSceneryMode(attr) ? attr : 'rain';
+
+    window.addEventListener('scenery-change', (e: Event) => {
+      const customEvent = e as CustomEvent<SceneryMode>;
+      if (customEvent.detail) {
+        currentMode = customEvent.detail;
+      }
+    });
+
+    window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => {
+      reduceMotion = event.matches;
+      if (reduceMotion) {
+        cancelAnimationFrame(rafId);
+        ctx.clearRect(0, 0, width, height);
+      } else {
+        loop();
+      }
+    });
+
+    interface RainDrop {
+      x: number;
+      y: number;
+      len: number;
+      speed: number;
+      opacity: number;
+    }
+    const rainCount = Math.floor(Math.min(width / 22, 50));
+    const rainDrops: RainDrop[] = Array.from({ length: rainCount }, () => ({
+      x: Math.random() * (width + 200) - 100,
+      y: Math.random() * height,
+      len: Math.random() * 20 + 12,
+      speed: Math.random() * 4 + 7,
+      opacity: Math.random() * 0.12 + 0.05,
+    }));
+
+    let isVisible = true;
+    document.addEventListener('visibilitychange', () => {
+      isVisible = document.visibilityState === 'visible';
+    });
+
+    function loop() {
+      if (!ctx) return;
+      if (reduceMotion) {
+        ctx.clearRect(0, 0, width, height);
+        return;
+      }
+      if (!isVisible) {
+        rafId = requestAnimationFrame(loop);
+        return;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (currentMode === 'rain' || currentMode === 'twilight') {
+        ctx.lineWidth = 1;
+        const angle = -0.06;
+        for (const d of rainDrops) {
+          ctx.strokeStyle = `rgba(229, 227, 220, ${d.opacity})`;
+          ctx.beginPath();
+          ctx.moveTo(d.x, d.y);
+          ctx.lineTo(d.x + Math.sin(angle) * d.len, d.y + Math.cos(angle) * d.len);
+          ctx.stroke();
+
+          d.y += d.speed;
+          d.x += Math.sin(angle) * d.speed;
+          if (d.y > height) {
+            d.y = -d.len;
+            d.x = Math.random() * (width + 200) - 100;
+          }
+        }
+      }
+
+      rafId = requestAnimationFrame(loop);
+    }
+
+    loop();
+  }
+
+  initSceneryCanvas();
+  document.addEventListener('astro:page-load', initSceneryCanvas);
+</script>

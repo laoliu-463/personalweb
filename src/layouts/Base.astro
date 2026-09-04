@@ -1,12 +1,22 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import SceneryCanvas from '../components/SceneryCanvas.astro';
+import MoodWidget from '../components/MoodWidget.astro';
 
 interface Props {
   title: string;
   description?: string;
+  align?: 'left' | 'center';
 }
 
-const { title, description = 'Lao Liu 的个人网站：文章与项目' } = Astro.props;
+const {
+  title,
+  description = '雾隐·陈墨 — 潮湿光线里的代码、文字与沉静观察',
+  align = 'center',
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -16,27 +26,83 @@ const { title, description = 'Lao Liu 的个人网站：文章与项目' } = Ast
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/avatar.svg" />
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml" />
+
+    <!-- Google Fonts: 衬线体 Fraunces & Noto Serif SC, 正文 Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- 首屏写入风光模式，避免强调色闪烁；与 src/lib/scenery.ts 保持同一套时段规则 -->
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('js');
+        var allowed = { rain: 1, twilight: 1, mist: 1, star: 1 };
+        var saved = null;
+        try {
+          saved = localStorage.getItem('preferred-scenery');
+        } catch (e) {}
+        var mode;
+        if (saved && allowed[saved]) {
+          mode = saved;
+        } else {
+          var hour = new Date().getHours();
+          if (hour >= 6 && hour < 17) mode = 'mist';
+          else if (hour >= 17 && hour < 20) mode = 'twilight';
+          else if (hour >= 20 && hour < 23) mode = 'rain';
+          else mode = 'star';
+        }
+        document.documentElement.setAttribute('data-scenery', mode);
+      })();
+    </script>
+
+    <ClientRouter />
     <title>{title}</title>
   </head>
-  <body>
-    <header class="site-header">
-      <a class="site-title" href="/">laoliu</a>
-      <nav>
-        <a href="/">首页</a>
-        <a href="/blog/">文章</a>
-        <a href="/projects/">项目</a>
-      </nav>
-    </header>
-    <main>
+  <body class="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-dvh flex flex-col relative">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+
+    <!-- 全屏胶片颗粒感蒙版 -->
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- 动态山雾月影景观 -->
+    <SceneryCanvas />
+
+    <!-- 右下角黑胶播放挂件 -->
+    <MoodWidget />
+
+    <!-- 顶部导航 -->
+    <Navbar />
+
+    <!-- 主要内容容器 -->
+    <main
+      id="main-content"
+      tabindex="-1"
+      class={`flex-1 w-full relative z-10 animate-rise pt-28 pb-20 px-6 ${
+        align === 'left' ? 'max-w-5xl mx-auto lg:mr-auto lg:ml-20 xl:ml-36' : 'max-w-5xl mx-auto'
+      }`}
+    >
       <slot />
     </main>
-    <footer class="site-footer">
-      <span>© {new Date().getFullYear()} Lao Liu</span>
-      <span>
-        <a href="https://github.com/laoliu-463">GitHub</a>
-        <a href="/rss.xml">RSS</a>
-      </span>
-    </footer>
+
+    <!-- 底部页脚 -->
+    <Footer />
+
+    <script>
+      import { applyScenery, resolveScenery } from '../lib/scenery';
+
+      function syncChrome() {
+        document.documentElement.classList.add('js');
+        applyScenery(resolveScenery());
+      }
+
+      syncChrome();
+      document.addEventListener('astro:after-swap', syncChrome);
+      document.addEventListener('astro:page-load', syncChrome);
+    </script>
   </body>
 </html>

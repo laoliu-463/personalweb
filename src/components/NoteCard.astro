@@ -1,0 +1,35 @@
+---
+import { formatDate } from '../lib/format';
+
+interface Props {
+  title?: string | undefined;
+  pubDate: Date;
+  mood?: string | undefined;
+  tags?: string[] | undefined;
+}
+
+const { title, pubDate, mood, tags = [] } = Astro.props;
+---
+
+<div class="frag py-4 group">
+  <!-- 沉香酒红巨型双引号 -->
+  <span class="frag-mark">"</span>
+
+  <div class="space-y-2">
+    <div class="flex items-center gap-3 text-xs font-mono text-[#8c8d93]">
+      <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+      {mood && <span>· {mood}</span>}
+      {tags.length > 0 && <span class="ml-auto text-[11px] text-[#646873]">{tags.map(t => `#${t}`).join(' ')}</span>}
+    </div>
+
+    {title && (
+      <h4 class="text-base font-serif font-normal text-[#e5e3dc]">
+        {title}
+      </h4>
+    )}
+
+    <div class="text-base sm:text-lg font-serif italic text-[#e5e3dc] leading-relaxed space-y-2 font-light">
+      <slot />
+    </div>
+  </div>
+</div>

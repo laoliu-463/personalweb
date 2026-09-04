@@ -1,0 +1,30 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-20 border-t border-[var(--border-color)] pt-10 pb-24 relative z-20 text-xs text-[var(--text-muted)] bg-[var(--bg-primary)]/80 backdrop-blur-md">
+  <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+    <div class="space-y-1.5">
+      <div class="flex items-center gap-3">
+        <span class="font-mono text-[var(--text-secondary)]">© {currentYear} Lao Liu</span>
+        <span class="text-[var(--border-color)]">/</span>
+        <span class="font-mono text-[var(--text-muted)]">Digital Solitude & Code</span>
+      </div>
+      <p class="text-xs text-[var(--text-secondary)] font-sans">
+        在代码与文字的边界处思考，构建干净、独立与从容。
+      </p>
+    </div>
+
+    <div class="flex items-center gap-5 text-xs font-mono">
+      <a href="https://github.com/laoliu-463" target="_blank" rel="noopener noreferrer" class="mel-link text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+        GitHub ↗
+      </a>
+      <a href="/rss.xml" class="mel-link text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+        RSS
+      </a>
+      <a href="/about" class="mel-link text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+        关于
+      </a>
+    </div>
+  </div>
+</footer>

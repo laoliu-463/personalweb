@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" fill="#181620"/>
+  <circle cx="100" cy="100" r="88" fill="#201d2a" stroke="rgba(212, 163, 115, 0.25)" stroke-width="1.5"/>
+  <circle cx="100" cy="78" r="34" fill="#9c97aa"/>
+  <path d="M50 162 C58 122, 142 122, 150 162" fill="#9c97aa"/>
+  <!-- 温暖琥珀雨夜光晕点缀 -->
+  <circle cx="100" cy="100" r="65" fill="none" stroke="#d4a373" stroke-width="0.8" stroke-dasharray="4 8" opacity="0.4"/>
+  <circle cx="100" cy="78" r="3" fill="#d4a373"/>
+</svg>

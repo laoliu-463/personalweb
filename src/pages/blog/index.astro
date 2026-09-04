@@ -1,24 +1,32 @@
 ---
 import Base from '../../layouts/Base.astro';
+import BlogCard from '../../components/BlogCard.astro';
 import { getSortedPosts } from '../../lib/posts';
-import { formatDate } from '../../lib/format';
 
 const posts = await getSortedPosts();
 ---
 
-<Base title="文章 — laoliu" description="全部博客文章">
-  <h1>文章</h1>
-  <ul class="post-list">
-    {
-      posts.map((post) => (
-        <li>
-          <time datetime={post.data.pubDate.toISOString()}>
-            {formatDate(post.data.pubDate)}
-          </time>
-          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-          <p class="desc">{post.data.description}</p>
-        </li>
-      ))
-    }
-  </ul>
+<Base title="沉淀的文字 — 雾隐 · Lao Liu" description="在湿润夜色与灯光下写下的思考与工程记录">
+  <div class="max-w-4xl">
+    <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-12">
+      <h1 class="font-serif text-4xl font-normal text-[#e5e3dc]">沉淀的文字</h1>
+      <span class="text-xs font-mono text-[#8c8d93]">COUNT: {posts.length}</span>
+    </div>
+
+    <div class="space-y-6">
+      {
+        posts.map((post) => (
+          <BlogCard
+            id={post.id}
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            category={post.data.category}
+            tags={post.data.tags}
+            mood={post.data.mood}
+          />
+        ))
+      }
+    </div>
+  </div>
 </Base>

@@ -1,0 +1,40 @@
+---
+interface Props {
+  tags: string[];
+  activeTag?: string;
+  baseUrl?: string;
+}
+
+const { tags, activeTag = 'all', baseUrl = '/blog' } = Astro.props;
+---
+
+<div class="flex flex-wrap items-center gap-2 text-xs font-mono my-6">
+  <span class="text-[#4a4a5a] mr-1 text-[11px]">FILTER //</span>
+  <a
+    href={baseUrl}
+    class={`px-2.5 py-1 rounded-xs transition-colors ${
+      activeTag === 'all'
+        ? 'bg-[#1e1e2c] text-[#d1d1dc] border border-[#c9375c]/50'
+        : 'text-[#626274] hover:text-[#8a8a9a] border border-[#161622] bg-[#0d0d14]'
+    }`}
+  >
+    全部 ({tags.length})
+  </a>
+  {
+    tags.map((tag) => {
+      const isActive = activeTag === tag;
+      return (
+        <a
+          href={`${baseUrl}?tag=${encodeURIComponent(tag)}`}
+          class={`px-2.5 py-1 rounded-xs transition-colors ${
+            isActive
+              ? 'bg-[#1e1e2c] text-[#d1d1dc] border border-[#c9375c]/50'
+              : 'text-[#626274] hover:text-[#8a8a9a] border border-[#161622] bg-[#0d0d14]'
+          }`}
+        >
+          #{tag}
+        </a>
+      );
+    })
+  }
+</div>
