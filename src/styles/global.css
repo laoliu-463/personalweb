@@ -265,7 +265,7 @@ body {
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
 }
 
-.work-item {
+a.work-item {
   display: grid;
   grid-template-columns: 80px 1fr auto;
   align-items: center;
@@ -275,19 +275,23 @@ body {
   cursor: pointer;
   position: relative;
   transition: padding-left .6s cubic-bezier(.22, 1, .36, 1);
+  text-decoration: none;
+  color: inherit;
 }
 
-.work-item:hover {
+a.work-item:hover {
   padding-left: 16px;
 }
 
-.work-item:hover .work-title {
+a.work-item:hover .work-title {
   color: var(--ink);
 }
 
-.work-item:hover .work-glow {
+a.work-item:hover .work-glow {
   opacity: 1;
 }
+
+/* 已有的 .work-item 样式 */
 
 .work-num {
   font-size: 13px;
