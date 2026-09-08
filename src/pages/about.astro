@@ -1,24 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 
-const timeline = [
-  {
-    year: '2024 — 至今',
-    role: '独立研发与系统架构',
-    description: '专注于高性能 Web 应用、编译工具链及基于 AI 的创意音频生成实验。',
-  },
-  {
-    year: '2022 — 2024',
-    role: '高级前端 / 全栈工程师',
-    description: '主导分布式协同系统重构，负责高负载前端性能优化与复杂交互体系构建。',
-  },
-  {
-    year: '2019 — 2022',
-    role: 'Web 开发者',
-    description: '涉足早期的微前端架构与云原生开发，在无数个风雨之夜调试与重构。',
-  },
-];
-
 const skills = [
   { category: '核心语言', items: ['TypeScript', 'Rust', 'Go', 'Python', 'SQL'] },
   { category: '框架与全栈', items: ['Astro', 'React', 'Next.js', 'Node.js', 'Tailwind CSS'] },
@@ -42,27 +24,12 @@ const skills = [
       <h1 class="font-serif text-3xl sm:text-4xl text-[#e5e3dc] font-normal mb-2">自述</h1>
       
       <p class="text-base text-[#e5e3dc] font-serif leading-relaxed">
-        一个生活在屏幕背后的开发者。偏爱阴雨连绵的天气、一杯温热的咖啡，以及在安静的房间里听着雨水滑落窗玻璃的声音。
+        大三屌丝，秋招实习无面试，写点文章。
       </p>
 
       <p class="text-sm text-[#8c8d93] font-sans leading-relaxed">
-        白天在严谨的逻辑与约束中处理系统架构，夜晚则在深暮沉香灰的房间里写下开源实验、声音片段与随笔。代码是搭建秩序的工具，而文字与风光是留存温度的容器。
+        秋招的邮箱安静得像废弃的站台，投出去的简历大多沉在雨里，没有回音。无人问津的日子里，文字成了唯一亮着的灯。
       </p>
-
-      <div class="pt-6 border-t border-[rgba(229,227,220,0.12)]">
-        <div class="text-xs font-mono text-[#8c8d93] mb-4">// 经历轨迹</div>
-        <div class="space-y-6">
-          {
-            timeline.map((item) => (
-              <div>
-                <div class="text-xs font-mono text-[#8c8d93]">{item.year}</div>
-                <div class="font-serif text-base text-[#e5e3dc] mt-1">{item.role}</div>
-                <div class="text-xs font-sans text-[#8c8d93] mt-1">{item.description}</div>
-              </div>
-            ))
-          }
-        </div>
-      </div>
 
       <div class="about-sign font-serif italic text-base text-[#e5e3dc] pt-4">
         — Lao Liu，写于三月的一个雨天

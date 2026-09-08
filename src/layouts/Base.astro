@@ -67,7 +67,7 @@ const {
     <a class="skip-link" href="#main-content">跳到主要内容</a>
 
     <!-- 全屏胶片颗粒感蒙版 -->
-    <div class="grain" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true" data-astro-transition-persist="grain"></div>
 
     <!-- 动态山雾月影景观 -->
     <SceneryCanvas />
@@ -95,9 +95,18 @@ const {
     <script>
       import { applyScenery, resolveScenery } from '../lib/scenery';
 
+      function externalizeLinks() {
+        document.querySelectorAll('a[href^="http"]').forEach((a) => {
+          if (a.target !== '_blank') a.target = '_blank';
+          const rel = a.rel || '';
+          if (!rel.includes('noopener')) a.rel = (rel ? rel + ' ' : '') + 'noopener noreferrer';
+        });
+      }
+
       function syncChrome() {
         document.documentElement.classList.add('js');
         applyScenery(resolveScenery());
+        externalizeLinks();
       }
 
       syncChrome();
