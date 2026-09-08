@@ -1,5 +1,5 @@
 ---
-// 黑胶环境声播放挂件：只负责播放/暂停，风光图标由 html[data-scenery] 驱动
+// 黑胶背景音乐挂件：播放 /bgm.mp3，进入页面自动播放，点击黑胶切换开关
 ---
 
 <div
@@ -7,14 +7,16 @@
   transition:persist="mood-widget"
   class="fixed bottom-7 right-7 z-[60] flex items-center justify-center p-2 rounded-full bg-[var(--bg-card)] border border-[var(--border-color)] shadow-2xl"
   role="region"
-  aria-label="环境声播放"
+  aria-label="背景音乐播放"
 >
+  <audio id="bgm-audio" src="/bgm.mp3" loop preload="auto"></audio>
+
   <button
     type="button"
     id="vinyl-player-btn"
     class="relative flex items-center justify-center cursor-pointer select-none"
     aria-pressed="false"
-    aria-label="播放环境声"
+    aria-label="播放背景音乐"
   >
     <svg id="vinyl-tonearm" class="tonearm-vercel" viewBox="0 0 32 38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="26" cy="4" r="4" fill="#e5e7eb" stroke="#374151" stroke-width="1"/>
@@ -55,86 +57,101 @@
 <script>
   import { prefersReducedMotion } from '../lib/scenery';
 
+  const STORAGE_KEY = 'bgm-muted';
+  const BGM_VOLUME = 0.35;
+
   function initMoodWidget() {
     if ((window as any).__MOOD_WIDGET_INITIALIZED__) return;
     (window as any).__MOOD_WIDGET_INITIALIZED__ = true;
 
-    let audioCtx: AudioContext | null = null;
-    let noiseNode: AudioBufferSourceNode | null = null;
-    let gainNode: GainNode | null = null;
-    let isPlaying = false;
-
+    const audio = document.getElementById('bgm-audio') as HTMLAudioElement | null;
     const vinylBtn = document.getElementById('vinyl-player-btn');
     const vinylDisc = document.getElementById('vinyl-disc');
     const vinylTonearm = document.getElementById('vinyl-tonearm');
 
+    if (!audio || !vinylBtn) return;
+
+    audio.volume = BGM_VOLUME;
+
+    let userExplicitlyMuted = false;
+    try {
+      userExplicitlyMuted = localStorage.getItem(STORAGE_KEY) === '1';
+    } catch (e) {}
+
     function setPlayingUi(playing: boolean) {
       vinylBtn?.setAttribute('aria-pressed', String(playing));
-      vinylBtn?.setAttribute('aria-label', playing ? '暂停环境声' : '播放环境声');
+      vinylBtn?.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
       const reduce = prefersReducedMotion();
       vinylDisc?.classList.toggle('vinyl-playing-spin', playing && !reduce);
       vinylTonearm?.classList.toggle('tonearm-playing-drop', playing);
     }
 
-    function toggleVinylAmbientSound() {
-      if (!isPlaying) {
-        if (!audioCtx) {
-          const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-          audioCtx = new AudioContextClass();
-        }
-
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-
-        const bufferSize = audioCtx.sampleRate * 2;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1;
-          b0 = 0.99886 * b0 + white * 0.0555179;
-          b1 = 0.99332 * b1 + white * 0.0750759;
-          b2 = 0.96900 * b2 + white * 0.1538520;
-          b3 = 0.86650 * b3 + white * 0.3104856;
-          b4 = 0.55000 * b4 + white * 0.5329522;
-          b5 = -0.7616 * b5 - white * 0.0168980;
-          data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.04;
-          b6 = white * 0.115926;
-        }
-
-        const noiseSource = audioCtx.createBufferSource();
-        noiseSource.buffer = buffer;
-        noiseSource.loop = true;
-
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 850;
-
-        gainNode = audioCtx.createGain();
-        gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
-
-        noiseSource.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        noiseSource.start();
-        noiseNode = noiseSource;
-        isPlaying = true;
-        setPlayingUi(true);
-      } else {
-        if (gainNode && audioCtx) {
-          gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-          setTimeout(() => {
-            noiseNode?.stop();
-            isPlaying = false;
-            setPlayingUi(false);
-          }, 500);
-        }
+    function playBgm() {
+      const p = audio.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => setPlayingUi(true)).catch(() => {
+          // 浏览器阻止自动播放，等待用户首次交互后再播
+          setPlayingUi(false);
+          tryAutoplayOnFirstInteraction();
+        });
       }
     }
 
-    vinylBtn?.addEventListener('click', toggleVinylAmbientSound);
+    function pauseBgm() {
+      audio.pause();
+      setPlayingUi(false);
+    }
+
+    let firstInteractionHandler: (() => void) | null = null;
+    function tryAutoplayOnFirstInteraction() {
+      if (firstInteractionHandler) return;
+      firstInteractionHandler = () => {
+        if (userExplicitlyMuted) return;
+        playBgm();
+        cleanupFirstInteraction();
+      };
+      window.addEventListener('click', firstInteractionHandler, { once: true });
+      window.addEventListener('keydown', firstInteractionHandler, { once: true });
+      window.addEventListener('touchstart', firstInteractionHandler, { once: true });
+    }
+
+    function cleanupFirstInteraction() {
+      if (!firstInteractionHandler) return;
+      window.removeEventListener('click', firstInteractionHandler);
+      window.removeEventListener('keydown', firstInteractionHandler);
+      window.removeEventListener('touchstart', firstInteractionHandler);
+      firstInteractionHandler = null;
+    }
+
+    vinylBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (audio.paused) {
+        userExplicitlyMuted = false;
+        try { localStorage.setItem(STORAGE_KEY, '0'); } catch (err) {}
+        cleanupFirstInteraction();
+        playBgm();
+      } else {
+        userExplicitlyMuted = true;
+        try { localStorage.setItem(STORAGE_KEY, '1'); } catch (err) {}
+        pauseBgm();
+      }
+    });
+
+    // 音频加载完成后尝试自动播放
+    if (!userExplicitlyMuted) {
+      if (audio.readyState >= 2) {
+        playBgm();
+      } else {
+        audio.addEventListener('canplay', playBgm, { once: true });
+      }
+    }
+
+    // 页面切换后保持播放状态同步
+    document.addEventListener('astro:page-load', () => {
+      if (!audio.paused) {
+        setPlayingUi(true);
+      }
+    });
   }
 
   initMoodWidget();

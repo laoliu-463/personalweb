@@ -16,3 +16,6 @@ pnpm-debug.log*
 
 # macOS
 .DS_Store
+
+# AI 音频源文件（网站使用转好的 mp3）
+/*.wav

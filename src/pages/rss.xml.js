@@ -1,19 +1,19 @@
 import rss from '@astrojs/rss';
-import { getSortedPosts } from '../lib/posts';
+import { getSortedArticles } from '../lib/articles';
 
 /** @param {import('astro').APIContext} context */
 export async function GET(context) {
-  const posts = await getSortedPosts();
+  const articles = await getSortedArticles();
   return rss({
     title: 'laoliu 的文章',
     description: 'Lao Liu 的个人网站：文章与项目',
     site: context.site ?? 'https://example.com',
-    items: posts.map((post) => ({
-      title: post.data.title,
-      description: post.data.description,
-      pubDate: post.data.pubDate,
-      link: `/blog/${post.id}/`,
-      categories: post.data.tags,
+    items: articles.map((article) => ({
+      title: article.data.title,
+      description: article.data.description,
+      pubDate: article.data.pubDate,
+      link: `/articles/${article.id}/`,
+      categories: article.data.tags,
     })),
   });
 }

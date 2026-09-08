@@ -1,16 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
-import BlogCard from '../components/BlogCard.astro';
+import ArticleCard from '../components/ArticleCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { getFeaturedProjects, mapRepoToCard } from '../lib/projects';
-import { getSortedPosts } from '../lib/posts';
-import { getSortedNotes } from '../lib/notes';
+import { getSortedArticles, getArticlesByCategory } from '../lib/articles';
 import { render } from 'astro:content';
 
-const posts = (await getSortedPosts()).slice(0, 4);
+const posts = (await getSortedArticles()).slice(0, 4);
 const featuredRepos = await getFeaturedProjects(4);
 const featuredProjects = featuredRepos.map((repo, i) => mapRepoToCard(repo, i + 1));
-const rawNotes = (await getSortedNotes()).slice(0, 3);
+const rawNotes = (await getArticlesByCategory('随笔')).slice(0, 3);
 const notes = await Promise.all(
   rawNotes.map(async (note) => {
     const { Content } = await render(note);
@@ -67,11 +66,11 @@ const notes = await Promise.all(
         featuredProjects.map((project, idx) => (
           <ProjectCard
             index={idx + 1}
-            title={project.data.title}
-            description={project.data.description}
-            tags={project.data.tags}
-            github={project.data.github}
-            demo={project.data.demo}
+            title={project.title}
+            description={project.description}
+            tags={project.tags}
+            github={project.github}
+            demo={project.demo}
           />
         ))
       }
@@ -82,7 +81,7 @@ const notes = await Promise.all(
   <section class="py-20">
     <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-10">
       <h2 class="font-serif text-3xl font-normal text-[#e5e3dc]">沉淀的文字</h2>
-      <a href="/blog" class="mel-link text-xs font-mono text-[#8c8d93] hover:text-[#e5e3dc]">
+      <a href="/articles" class="mel-link text-xs font-mono text-[#8c8d93] hover:text-[#e5e3dc]">
         全部文章 →
       </a>
     </div>
@@ -90,7 +89,7 @@ const notes = await Promise.all(
     <div class="space-y-4">
       {
         posts.map((post) => (
-          <BlogCard
+          <ArticleCard
             id={post.id}
             title={post.data.title}
             description={post.data.description}
