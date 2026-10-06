@@ -9,14 +9,17 @@ const projects = repos.map((repo, i) => mapRepoToCard(repo, i + 1));
 
 <Base title="作品集 — 屌丝" description="2019 — 2026 年间的代码实验与系统工程">
   <div class="max-w-5xl">
-    <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-12">
-      <h1 class="font-serif text-4xl font-normal text-[#e5e3dc]">作品集</h1>
-      <span class="text-xs font-mono text-[#8c8d93]">2019 — 2026</span>
+    <div class="flex justify-between items-baseline border-b border-[var(--border-color)] pb-6 mb-12">
+      <div>
+        <h1 class="font-serif text-3xl sm:text-4xl font-normal text-[var(--text-primary)]">作品集</h1>
+        <p class="text-xs font-mono text-[var(--text-secondary)] mt-1.5">// ALL PROJECTS & LABS ({projects.length})</p>
+      </div>
+      <span class="text-xs font-mono text-[var(--text-secondary)]">2019 — 2026</span>
     </div>
 
-    <div class="work-list">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       {
-        projects.map((proj) => (
+        projects.map((proj, idx) => (
           <ProjectCard
             index={proj.index}
             title={proj.title}
@@ -25,6 +28,7 @@ const projects = repos.map((repo, i) => mapRepoToCard(repo, i + 1));
             github={proj.github}
             demo={proj.demo}
             year={proj.year}
+            featured={idx === 0 || (idx > 0 && idx % 5 === 0)}
           />
         ))
       }

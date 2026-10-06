@@ -60,22 +60,34 @@
   --header-offset: 6rem;
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
+  --spotlight-border-glow: rgba(229, 227, 220, 0.22);
+  --spotlight-inner-glow: rgba(229, 227, 220, 0.04);
+  --card-glass: rgba(25, 26, 32, 0.72);
+  --card-glass-border: rgba(229, 227, 220, 0.09);
 }
 
 [data-scenery="rain"] {
   --accent-glow: rgba(68, 80, 100, 0.35);
+  --spotlight-border-glow: rgba(140, 165, 195, 0.28);
+  --spotlight-inner-glow: rgba(100, 130, 165, 0.06);
 }
 
 [data-scenery="twilight"] {
   --accent-glow: rgba(92, 43, 58, 0.35);
+  --spotlight-border-glow: rgba(185, 95, 115, 0.3);
+  --spotlight-inner-glow: rgba(150, 65, 85, 0.06);
 }
 
 [data-scenery="mist"] {
   --accent-glow: rgba(68, 80, 100, 0.25);
+  --spotlight-border-glow: rgba(150, 170, 190, 0.24);
+  --spotlight-inner-glow: rgba(110, 130, 150, 0.05);
 }
 
 [data-scenery="star"] {
   --accent-glow: rgba(229, 227, 220, 0.2);
+  --spotlight-border-glow: rgba(229, 227, 220, 0.32);
+  --spotlight-inner-glow: rgba(229, 227, 220, 0.06);
 }
 
 @layer base {
@@ -673,6 +685,83 @@ html[data-scenery="star"] .vinyl-scenery-icon[data-icon="star"] {
 
 #vinyl-player-btn:hover .tonearm-playing-drop {
   transform: rotate(4deg);
+}
+
+/* ---------- Spotlight 探照灯微光卡片与 Bento 网格 ---------- */
+.spotlight-card {
+  position: relative;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.35s ease;
+}
+
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    360px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+    var(--spotlight-border-glow),
+    transparent 65%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 2;
+}
+
+.spotlight-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    480px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+    var(--spotlight-inner-glow),
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 1;
+}
+
+.spotlight-card:hover::before,
+.spotlight-card:hover::after {
+  opacity: 1;
+}
+
+.spotlight-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(229, 227, 220, 0.18);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+}
+
+/* 玻璃态面板 */
+.glass-panel {
+  background: var(--card-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-glass-border);
+}
+
+/* 阅读进度条 */
+.read-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--mist), var(--wine), var(--ink));
+  z-index: 99;
+  width: 0%;
+  transition: width 0.1s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {

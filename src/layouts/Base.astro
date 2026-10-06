@@ -96,7 +96,7 @@ const {
       import { applyScenery, resolveScenery } from '../lib/scenery';
 
       function externalizeLinks() {
-        document.querySelectorAll('a[href^="http"]').forEach((a) => {
+        document.querySelectorAll<HTMLAnchorElement>('a[href^="http"]').forEach((a) => {
           if (a.target !== '_blank') a.target = '_blank';
           const rel = a.rel || '';
           if (!rel.includes('noopener')) a.rel = (rel ? rel + ' ' : '') + 'noopener noreferrer';

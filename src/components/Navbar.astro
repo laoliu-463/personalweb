@@ -19,11 +19,13 @@ const isActive = (href: string) => {
 };
 ---
 
-<header id="site-header" class="fixed top-0 left-0 right-0 z-40 px-8 md:px-[6vw] py-4 sm:py-8 mix-blend-difference">
-  <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+<header id="site-header" class="fixed top-0 left-0 right-0 z-40 px-6 sm:px-10 md:px-[6vw] py-4 transition-all duration-300">
+  <div class="max-w-5xl mx-auto flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-5 py-3 rounded-full glass-panel border border-[var(--border-color)] shadow-xl">
     <div class="flex items-center justify-between gap-4">
-      <a href="/" class="font-serif text-lg tracking-wider text-[#e5e3dc] hover:opacity-80 transition-opacity">
-        屌丝 <span class="font-sans font-light text-xs text-[#8c8d93] ml-1">Lao Liu</span>
+      <a href="/" class="font-serif text-lg tracking-wider text-[var(--text-primary)] hover:opacity-80 transition-opacity flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[var(--text-primary)] opacity-70"></span>
+        <span>屌丝</span>
+        <span class="font-mono font-light text-[11px] text-[var(--text-secondary)] opacity-80">Lao Liu</span>
       </a>
 
       <button
@@ -42,23 +44,24 @@ const isActive = (href: string) => {
       </button>
     </div>
 
-<nav id="site-nav" class="text-xs font-sans text-[#8c8d93] flex items-center gap-6" aria-label="站点">
+    <nav id="site-nav" class="text-xs font-sans text-[var(--text-secondary)] flex items-center gap-6" aria-label="站点">
       {
         navItems.map((item) => {
           const active = isActive(item.href);
           return (
             <a
               href={item.href}
-              class={`nav-link transition-colors duration-300 ${
-                active ? 'text-[#e5e3dc] font-normal border-b border-[#e5e3dc]' : 'hover:text-[#e5e3dc]'
+              class={`nav-link transition-all duration-300 flex items-center gap-1.5 ${
+                active ? 'text-[var(--text-primary)] font-medium' : 'hover:text-[var(--text-primary)]'
               }`}
             >
-              {item.label}
+              {active && <span class="w-1 h-1 rounded-full bg-[var(--text-primary)]"></span>}
+              <span>{item.label}</span>
             </a>
           );
         })
       }
-      <a href={githubLink} target="_blank" rel="noopener noreferrer" class="nav-link transition-colors duration-300 hover:text-[#e5e3dc]">
+      <a href={githubLink} target="_blank" rel="noopener noreferrer" class="nav-link font-mono transition-colors duration-300 hover:text-[var(--text-primary)]">
         GitHub ↗
       </a>
     </nav>

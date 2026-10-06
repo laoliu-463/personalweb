@@ -1,5 +1,5 @@
 ---
-// 《雾隐·陈墨》动态山雾月影与细雨景观组件
+// 《雾隐·陈墨》动态山雾月影与沉浸水墨粒子景观组件
 ---
 
 <div id="scenery-canvas-wrapper" transition:persist="scenery-canvas" class="fixed inset-0 pointer-events-none z-[0] overflow-hidden" aria-hidden="true">
@@ -12,8 +12,8 @@
     <div class="moon"></div>
 
     <!-- 三重山峦剪影 -->
-    <div class="hills hills-back"></div>
-    <div class="hills hills-mid"></div>
+    <div class="hills hills-back" id="hills-back-layer"></div>
+    <div class="hills hills-mid" id="hills-mid-layer"></div>
 
     <!-- 双层无缝漂移山雾 -->
     <div class="fog-layer fog-1"></div>
@@ -26,12 +26,51 @@
     <div class="rain-overlay"></div>
   </div>
 
-  <!-- Canvas 渲染补充气象粒子 -->
+  <!-- Canvas 渲染水墨交互与各气象模式粒子 -->
   <canvas id="scenery-canvas" class="w-full h-full block absolute inset-0"></canvas>
 </div>
 
 <script>
   import { isSceneryMode, prefersReducedMotion, type SceneryMode } from '../lib/scenery';
+
+  interface InkDrop {
+    x: number;
+    y: number;
+    radius: number;
+    maxRadius: number;
+    alpha: number;
+    decay: number;
+    vx: number;
+    vy: number;
+    color: string;
+  }
+
+  interface StarParticle {
+    x: number;
+    y: number;
+    size: number;
+    baseAlpha: number;
+    alpha: number;
+    speed: number;
+    phase: number;
+  }
+
+  interface DustParticle {
+    x: number;
+    y: number;
+    size: number;
+    vx: number;
+    vy: number;
+    alpha: number;
+  }
+
+  interface RainDrop {
+    x: number;
+    y: number;
+    len: number;
+    speed: number;
+    opacity: number;
+  }
 
   function initSceneryCanvas() {
     const canvas = document.getElementById('scenery-canvas') as HTMLCanvasElement | null;
@@ -47,6 +86,15 @@
     let height = (canvas.height = window.innerHeight);
     let reduceMotion = prefersReducedMotion();
     let rafId = 0;
+
+    // 视差与鼠标坐标跟踪
+    let mouseX = width / 2;
+    let mouseY = height / 2;
+    let targetParallaxX = 0;
+    let targetParallaxY = 0;
+    let currentParallaxX = 0;
+    let currentParallaxY = 0;
+    let lastMoveTime = 0;
 
     function resize() {
       if (!canvas) return;
@@ -75,21 +123,77 @@
       }
     });
 
-    interface RainDrop {
-      x: number;
-      y: number;
-      len: number;
-      speed: number;
-      opacity: number;
-    }
-    const rainCount = Math.floor(Math.min(width / 22, 50));
+    // 水墨涟漪粒子池
+    const inkDrops: InkDrop[] = [];
+    const maxInkDrops = 36;
+
+    // 雨滴池
+    const rainCount = Math.floor(Math.min(width / 22, 60));
     const rainDrops: RainDrop[] = Array.from({ length: rainCount }, () => ({
       x: Math.random() * (width + 200) - 100,
       y: Math.random() * height,
-      len: Math.random() * 20 + 12,
+      len: Math.random() * 22 + 12,
       speed: Math.random() * 4 + 7,
-      opacity: Math.random() * 0.12 + 0.05,
+      opacity: Math.random() * 0.14 + 0.05,
     }));
+
+    // 星尘池
+    const starCount = Math.floor(Math.min(width / 18, 70));
+    const stars: StarParticle[] = Array.from({ length: starCount }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * (height * 0.65),
+      size: Math.random() * 1.5 + 0.5,
+      baseAlpha: Math.random() * 0.5 + 0.2,
+      alpha: 0.3,
+      speed: Math.random() * 0.02 + 0.008,
+      phase: Math.random() * Math.PI * 2,
+    }));
+
+    // 暮光微尘池
+    const dustCount = Math.floor(Math.min(width / 30, 35));
+    const dusts: DustParticle[] = Array.from({ length: dustCount }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 2 + 1,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: -Math.random() * 0.3 - 0.1,
+      alpha: Math.random() * 0.3 + 0.1,
+    }));
+
+    // 监听鼠标交互生成水墨晕染
+    function onMouseMove(e: MouseEvent) {
+      if (reduceMotion) return;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      const now = performance.now();
+
+      // 微视差目标偏移
+      targetParallaxX = ((mouseX / width) - 0.5) * 20;
+      targetParallaxY = ((mouseY / height) - 0.5) * 15;
+
+      // 节流生成墨滴（每 45ms 最多生成一颗）
+      if (now - lastMoveTime > 45 && inkDrops.length < maxInkDrops) {
+        lastMoveTime = now;
+        const colorPalette = [
+          'rgba(229, 227, 220,',  // 墨白
+          'rgba(92, 43, 58,',     // 沉香酒红
+          'rgba(68, 80, 100,',    // 雾蓝
+        ];
+        const pickColor: string = colorPalette[Math.floor(Math.random() * colorPalette.length)] || 'rgba(229, 227, 220,';
+        inkDrops.push({
+          x: mouseX,
+          y: mouseY,
+          radius: Math.random() * 6 + 4,
+          maxRadius: Math.random() * 32 + 28,
+          alpha: Math.random() * 0.18 + 0.12,
+          decay: Math.random() * 0.004 + 0.003,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          color: pickColor,
+        });
+      }
+    }
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
 
     let isVisible = true;
     document.addEventListener('visibilitychange', () => {
@@ -109,7 +213,38 @@
 
       ctx.clearRect(0, 0, width, height);
 
+      // 平滑缓动微视差
+      currentParallaxX += (targetParallaxX - currentParallaxX) * 0.04;
+      currentParallaxY += (targetParallaxY - currentParallaxY) * 0.04;
+
+      // 1. 渲染交互水墨晕染（全模式共有的互动生命力）
+      for (let i = inkDrops.length - 1; i >= 0; i--) {
+        const drop = inkDrops[i];
+        if (!drop) continue;
+        drop.radius += (drop.maxRadius - drop.radius) * 0.04;
+        drop.alpha -= drop.decay;
+        drop.x += drop.vx;
+        drop.y += drop.vy;
+
+        if (drop.alpha <= 0.005) {
+          inkDrops.splice(i, 1);
+          continue;
+        }
+
+        const grad = ctx.createRadialGradient(drop.x, drop.y, 0, drop.x, drop.y, drop.radius);
+        grad.addColorStop(0, `${drop.color} ${drop.alpha})`);
+        grad.addColorStop(0.6, `${drop.color} ${drop.alpha * 0.4})`);
+        grad.addColorStop(1, `${drop.color} 0)`);
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(drop.x, drop.y, drop.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 2. 根据气象模式渲染特有氛围粒子
       if (currentMode === 'rain' || currentMode === 'twilight') {
+        // 雨丝渲染
         ctx.lineWidth = 1;
         const angle = -0.06;
         for (const d of rainDrops) {
@@ -126,6 +261,50 @@
             d.x = Math.random() * (width + 200) - 100;
           }
         }
+      }
+
+      if (currentMode === 'star') {
+        // 星辰闪烁渲染 + 微视差
+        for (const s of stars) {
+          s.phase += s.speed;
+          s.alpha = s.baseAlpha + Math.sin(s.phase) * 0.2;
+          const drawX = s.x + currentParallaxX * 0.4;
+          const drawY = s.y + currentParallaxY * 0.4;
+
+          ctx.fillStyle = `rgba(229, 227, 220, ${Math.max(0.05, Math.min(0.9, s.alpha))})`;
+          ctx.beginPath();
+          ctx.arc(drawX, drawY, s.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (currentMode === 'twilight') {
+        // 暮色光尘微粒渲染
+        for (const dust of dusts) {
+          dust.x += dust.vx;
+          dust.y += dust.vy;
+          if (dust.y < -10) {
+            dust.y = height + 10;
+            dust.x = Math.random() * width;
+          }
+          if (dust.x < -10) dust.x = width + 10;
+          if (dust.x > width + 10) dust.x = -10;
+
+          ctx.fillStyle = `rgba(215, 140, 160, ${dust.alpha})`;
+          ctx.beginPath();
+          ctx.arc(dust.x, dust.y, dust.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (currentMode === 'mist') {
+        // 迷雾呼吸粒子：微弱的大柔焦光斑浮动
+        ctx.fillStyle = 'rgba(200, 215, 230, 0.012)';
+        const mistPulseX = (Math.sin(Date.now() * 0.0004) * 50) + width * 0.5;
+        const mistPulseY = height * 0.7;
+        const mistGrad = ctx.createRadialGradient(mistPulseX, mistPulseY, 10, mistPulseX, mistPulseY, 220);
+        mistGrad.addColorStop(0, 'rgba(140, 160, 180, 0.04)');
+        mistGrad.addColorStop(1, 'rgba(140, 160, 180, 0)');
+        ctx.fillStyle = mistGrad;
+        ctx.beginPath();
+        ctx.arc(mistPulseX, mistPulseY, 220, 0, Math.PI * 2);
+        ctx.fill();
       }
 
       rafId = requestAnimationFrame(loop);

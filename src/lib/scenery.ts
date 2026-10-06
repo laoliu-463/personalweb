@@ -29,6 +29,16 @@ export function applyScenery(mode: SceneryMode): void {
   window.dispatchEvent(new CustomEvent<SceneryMode>('scenery-change', { detail: mode }));
 }
 
+export function setScenery(mode: SceneryMode): void {
+  try {
+    localStorage.setItem(SCENERY_STORAGE_KEY, mode);
+  } catch {
+    // 忽略 localStorage 写入错误
+  }
+  applyScenery(mode);
+}
+
 export function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
+

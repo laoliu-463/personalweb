@@ -20,48 +20,72 @@ const notes = await Promise.all(
 
 <Base title="屌丝 · 在无人问津的日子里">
   <!-- Hero 区块：在潮湿的光线里 -->
-  <section class="hero -mt-28 min-h-[90vh] flex flex-col justify-end relative pb-16">
-    <div class="grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] items-end gap-10">
-      <!-- 左侧主标题 -->
+  <section class="hero -mt-24 min-h-[92vh] flex flex-col justify-end relative pb-16 z-20">
+    <div class="grid grid-cols-1 md:grid-cols-[1.15fr_0.85fr] items-end gap-12">
+      <!-- 左侧主标题与动态气象徽章 -->
       <div class="hero-left">
-        <div class="hero-eyebrow font-mono text-xs text-[#8c8d93] mb-7">
-          代码与随笔 · 2018 — 至今
+        <!-- 动态时序气象徽章 -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel border border-[var(--border-color)] mb-8 text-xs font-mono text-[var(--text-secondary)] shadow-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--text-primary)] animate-ping"></span>
+          <span id="hero-weather-badge">雾隐 · 戌时 · 细雨</span>
+          <span class="opacity-30">|</span>
+          <span class="text-[11px] opacity-80">2018 — 至今</span>
         </div>
-        <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl leading-tight font-normal text-[#e5e3dc] tracking-tight">
+
+        <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl leading-[1.08] font-normal text-[var(--text-primary)] tracking-tight">
           在无人问津的<br />
-          日子里
-          <span class="block text-sm font-sans font-light text-[#8c8d93] mt-6 tracking-normal">
-            秋招实习无面试，写点文章
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--text-primary)] via-[#dedbd2] to-[var(--text-secondary)]">
+            日子里
+          </span>
+          <span class="block text-sm sm:text-base font-sans font-light text-[var(--text-secondary)] mt-6 tracking-normal">
+            秋招实习无面试，写点文章。
           </span>
         </h1>
       </div>
 
-      <!-- 右侧诗意名言与向下滑动 -->
-<div class="hero-right flex flex-col md:items-end gap-5">
-        <p class="hero-quote max-w-[320px] md:text-right font-serif italic text-lg text-[#8c8d93] leading-relaxed border-l md:border-l-0 md:border-r border-[rgba(229,227,220,0.12)] pl-4 md:pl-0 md:pr-5">
-          "代码是搭建秩序的工具，而文字与风光是留存温度的容器。"
-        </p>
-        <a href="https://github.com/laoliu-463" target="_blank" rel="noopener noreferrer" class="hero-github text-xs font-mono text-[#8c8d93] hover:text-[#e5e3dc] transition-colors flex items-center gap-2">
-          GitHub ↗ laoliu-463
-        </a>
+      <!-- 右侧诗意名言卡片与入口 -->
+      <div class="hero-right flex flex-col md:items-end gap-6">
+        <div class="glass-panel p-6 sm:p-7 rounded-2xl border border-[var(--border-color)] max-w-[360px] shadow-2xl relative overflow-hidden group">
+          <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-[var(--wine)] opacity-20 blur-2xl rounded-full pointer-events-none"></div>
+          <p class="font-serif italic text-base sm:text-lg text-[var(--text-primary)] leading-relaxed mb-4">
+            “代码是搭建秩序的工具，而文字与风光是留存温度的容器。”
+          </p>
+          <div class="flex items-center justify-between pt-3 border-t border-[var(--border-color)] text-xs font-mono text-[var(--text-secondary)]">
+            <span>// NOTEBOOK</span>
+            <a
+              href="https://github.com/laoliu-463"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-[var(--text-primary)] transition-colors flex items-center gap-1 text-[11px]"
+            >
+              GitHub ↗ laoliu-463
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- 向下指示 -->
-    <div class="scroll-hint mt-16 flex items-center gap-3.5 text-xs text-[#8c8d93]">
+    <div class="scroll-hint mt-16 flex items-center gap-3.5 text-xs font-mono text-[var(--text-secondary)]">
       <span>向下浏览</span>
-      <div class="w-[1px] h-10 bg-gradient-to-b from-[#8c8d93] to-transparent animate-pulse"></div>
+      <div class="w-[1px] h-10 bg-gradient-to-b from-[var(--text-secondary)] to-transparent animate-pulse"></div>
     </div>
   </section>
 
-  <!-- 作品集列表 (Works) -->
-  <section class="works py-20" id="works">
-    <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-10">
-      <h2 class="font-serif text-3xl font-normal text-[#e5e3dc]">作品集</h2>
-      <span class="text-xs font-mono text-[#8c8d93]">2019 — 2026</span>
+  <!-- 作品集 Bento Grid (Works) -->
+  <section class="works py-24" id="works">
+    <div class="flex justify-between items-baseline border-b border-[var(--border-color)] pb-6 mb-12">
+      <div>
+        <h2 class="font-serif text-3xl sm:text-4xl font-normal text-[var(--text-primary)]">作品集</h2>
+        <p class="text-xs font-mono text-[var(--text-secondary)] mt-1.5">// EXPERIMENTS & SYSTEMS</p>
+      </div>
+      <a href="/projects" class="text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+        全部项目 →
+      </a>
     </div>
 
-    <div class="work-list">
+    <!-- Bento Grid 网格：首个项目横跨两列 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       {
         featuredProjects.map((project, idx) => (
           <ProjectCard
@@ -71,6 +95,7 @@ const notes = await Promise.all(
             tags={project.tags}
             github={project.github}
             demo={project.demo}
+            featured={idx === 0}
           />
         ))
       }
@@ -78,15 +103,18 @@ const notes = await Promise.all(
   </section>
 
   <!-- 沉淀的文字 (Latest Writings) -->
-  <section class="py-20">
-    <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-10">
-      <h2 class="font-serif text-3xl font-normal text-[#e5e3dc]">沉淀的文字</h2>
-      <a href="/articles" class="mel-link text-xs font-mono text-[#8c8d93] hover:text-[#e5e3dc]">
+  <section class="py-24">
+    <div class="flex justify-between items-baseline border-b border-[var(--border-color)] pb-6 mb-12">
+      <div>
+        <h2 class="font-serif text-3xl sm:text-4xl font-normal text-[var(--text-primary)]">沉淀的文字</h2>
+        <p class="text-xs font-mono text-[var(--text-secondary)] mt-1.5">// ARTICLES & THOUGHTS</p>
+      </div>
+      <a href="/articles" class="text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
         全部文章 →
       </a>
     </div>
 
-    <div class="space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       {
         posts.map((post) => (
           <ArticleCard
@@ -104,23 +132,27 @@ const notes = await Promise.all(
   </section>
 
   <!-- 随笔片段 (Fragments) -->
-  <section class="fragments py-20 bg-[#191a20] -mx-6 px-6 sm:-mx-12 sm:px-12 md:-mx-20 md:px-20 rounded-2xl">
-    <div class="flex justify-between items-baseline border-b border-[rgba(229,227,220,0.12)] pb-6 mb-12">
-      <h2 class="font-serif text-3xl font-normal text-[#e5e3dc]">片段</h2>
-      <span class="text-xs font-mono text-[#8c8d93]">未发表的即兴句子</span>
+  <section class="fragments py-20 px-8 sm:px-12 glass-panel rounded-3xl border border-[var(--border-color)] my-12 shadow-2xl relative overflow-hidden">
+    <div class="flex justify-between items-baseline border-b border-[var(--border-color)] pb-6 mb-12">
+      <div>
+        <h2 class="font-serif text-3xl font-normal text-[var(--text-primary)]">片段</h2>
+        <span class="text-xs font-mono text-[var(--text-secondary)] mt-1 block">未发表的即兴句子</span>
+      </div>
+      <span class="text-xs font-mono text-[var(--text-secondary)]">2024 — 2026</span>
     </div>
 
     <div class="frag-track space-y-12">
       {
         notes.map(({ note, Content }) => (
           <div class="frag">
-            <span class="frag-mark">"</span>
-            <div class="space-y-2">
-              <div class="text-base sm:text-xl font-serif italic text-[#e5e3dc] leading-relaxed">
+            <span class="frag-mark">“</span>
+            <div class="space-y-2.5">
+              <div class="text-base sm:text-xl font-serif italic text-[var(--text-primary)] leading-relaxed">
                 <Content />
               </div>
-              <div class="text-xs font-mono text-[#8c8d93] pt-2">
-                — {note.data.mood || '写于某次静谧夜里'}
+              <div class="text-xs font-mono text-[var(--text-secondary)] pt-1 flex items-center gap-2">
+                <span>—</span>
+                <span>{note.data.mood || '写于某次静谧夜里'}</span>
               </div>
             </div>
           </div>
@@ -131,11 +163,52 @@ const notes = await Promise.all(
 
   <!-- 联系专区 (Contact) -->
   <section class="contact text-center pt-24 pb-16">
-    <h2 class="font-serif font-normal text-3xl sm:text-5xl max-w-xl mx-auto mb-10 text-[#e5e3dc] leading-snug">
-      如果你也在某个潮湿的夜里想起了什么，写信给我
-    </h2>
-    <a class="contact-link inline-block text-sm sm:text-base text-[#8c8d93] border-b border-[rgba(229,227,220,0.12)] pb-2 hover:text-[#e5e3dc] hover:border-[#e5e3dc] transition-all" href="mailto:hello@wuyin.studio">
-      hello@wuyin.studio
-    </a>
+    <div class="max-w-xl mx-auto glass-panel p-8 sm:p-12 rounded-3xl border border-[var(--border-color)] shadow-2xl relative">
+      <div class="font-mono text-xs text-[var(--text-secondary)] mb-4">// GET IN TOUCH</div>
+      <h2 class="font-serif font-normal text-2xl sm:text-4xl text-[var(--text-primary)] leading-snug mb-8">
+        如果你也在某个潮湿的夜里想起了什么，写信给我
+      </h2>
+      <a
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--text-primary)] text-[var(--bg-primary)] font-mono text-sm hover:opacity-90 hover:scale-105 transition-all cursor-pointer shadow-lg"
+        href="mailto:hello@wuyin.studio"
+      >
+        <span>hello@wuyin.studio</span>
+        <span>↗</span>
+      </a>
+    </div>
   </section>
 </Base>
+
+<script>
+  import { resolveScenery } from '../lib/scenery';
+
+  function updateHeroWeatherBadge() {
+    const badge = document.getElementById('hero-weather-badge');
+    if (!badge) return;
+
+    const hour = new Date().getHours();
+    let timeLabel = '子时';
+    if (hour >= 5 && hour < 7) timeLabel = '卯时 · 拂晓';
+    else if (hour >= 7 && hour < 11) timeLabel = '辰时 · 晨光';
+    else if (hour >= 11 && hour < 13) timeLabel = '午时 · 正午';
+    else if (hour >= 13 && hour < 17) timeLabel = '申时 · 暮斜';
+    else if (hour >= 17 && hour < 19) timeLabel = '酉时 · 黄昏';
+    else if (hour >= 19 && hour < 21) timeLabel = '戌时 · 湿夜';
+    else if (hour >= 21 && hour < 23) timeLabel = '亥时 · 夜阑';
+    else timeLabel = '子夜 · 寂星';
+
+    const scenery = resolveScenery();
+    const sceneryName = {
+      mist: '迷雾',
+      twilight: '暮色',
+      rain: '细雨',
+      star: '星野',
+    }[scenery] || '细雨';
+
+    badge.textContent = `雾隐 · ${timeLabel} · ${sceneryName}`;
+  }
+
+  updateHeroWeatherBadge();
+  window.addEventListener('scenery-change', updateHeroWeatherBadge);
+  document.addEventListener('astro:page-load', updateHeroWeatherBadge);
+</script>
