@@ -48,23 +48,20 @@ a:focus-visible, button:focus-visible { outline: 2px solid #9b754d; outline-offs
 .section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
 .section-heading h2 { margin-top: 12px; font: 400 31px/1.5 var(--font-serif); letter-spacing: 1px; }
 .section-count { color: var(--muted); font: 11px var(--font-mono); white-space: nowrap; }
-.project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px 28px; }
-.project-card { min-width: 0; }
-.project-cover { display: grid; place-items: center; position: relative; aspect-ratio: 1.45; background: var(--night); overflow: hidden; }
-.project-cover img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-.project-cover:before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #17232f18, #17232f20 60%, #17232fc9); z-index: 1; }
-.project-cover:after { content: ''; position: absolute; inset: 0; z-index: 3; border: 1px solid #ead5b5aa; opacity: 0; pointer-events: none; transition: opacity 200ms ease; }
-.cover-1 img { object-position: 80% 50%; }
-.cover-2 img { object-position: 10% 50%; }
-.project-no { position: absolute; top: 16px; left: 18px; z-index: 2; font: italic 20px Georgia; color: #e5d6bf; }
-.cover-label { position: absolute; bottom: 16px; left: 18px; right: 40px; z-index: 2; color: #d6dcd9; font-size: 9px; letter-spacing: 1.4px; }
-.cover-arrow { position: absolute; right: 18px; bottom: 13px; z-index: 2; color: #e5d6bf; transition: transform 200ms var(--ease-out); }
-.project-caption { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 18px; }
-.project-caption h3 { font-size: 16px; line-height: 1.6; font-weight: 400; overflow-wrap: anywhere; }
-.project-year { color: var(--muted); font: 10px var(--font-mono); }
-.project-description { font-size: 13px; line-height: 1.9; color: var(--muted); margin-top: 8px; overflow-wrap: anywhere; }
-.project-meta { display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 11px; color: var(--muted); }
-.project-actions { display: flex; gap: 14px; }
+.project-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+.project-card { min-width: 0; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 24px; padding-block: 28px; border-top: 1px solid var(--line); }
+.project-no { padding-top: 7px; font: 11px/1.6 var(--font-mono); color: var(--muted); }
+.project-body { min-width: 0; }
+.project-caption { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
+.project-caption h3 { font: 400 24px/1.6 var(--font-serif); overflow-wrap: anywhere; }
+.project-year { flex-shrink: 0; color: var(--muted); font: 10px var(--font-mono); }
+.project-description { max-width: 760px; font-size: 13px; line-height: 1.9; color: var(--muted); margin-top: 8px; overflow-wrap: anywhere; }
+.project-links { display: grid; gap: 4px; margin-top: 12px; }
+.project-url { display: grid; grid-template-columns: 52px minmax(0, 1fr) 16px; align-items: center; gap: 12px; width: fit-content; max-width: 100%; min-height: 44px; }
+.project-link-label { color: var(--muted); font-size: 10px; }
+.project-link-address { font: 12px/1.8 var(--font-mono); overflow-wrap: anywhere; text-decoration: underline; text-decoration-color: #9b754d60; text-underline-offset: 4px; }
+.project-link-arrow { color: var(--muted); transition: transform 200ms var(--ease-out); }
+.project-meta { margin-top: 10px; font: 11px/1.8 var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
 .article-row { display: grid; grid-template-columns: 130px minmax(0, 1fr) 24px; gap: 24px; padding: 28px 0; border-top: 1px solid var(--line); align-items: center; }
 .article-row time { color: var(--muted); font: 11px var(--font-mono); letter-spacing: .5px; }
 .category { font-size: 10px; letter-spacing: 1px; color: #956c45; }
@@ -125,16 +122,14 @@ a:focus-visible, button:focus-visible { outline: 2px solid #9b754d; outline-offs
 [data-reveal]:focus-within { opacity: 1; transform: none; transition: none; }
 @media (hover: hover) and (pointer: fine) {
   .site-nav a:hover, .header-github:hover { color: #fff5e5; }
-  .text-link:hover span, .article-row:hover .article-arrow, .project-card:hover .cover-arrow { transform: translate(3px, -3px); }
-  .project-card:hover .project-cover:after { opacity: 1; }
+  .text-link:hover span, .article-row:hover .article-arrow, .project-url:hover .project-link-arrow { transform: translate(3px, -3px); }
   .primary-link:hover { background: #d4bca0; }
-  .article-toc a:hover, .project-actions a:hover { color: #956c45; }
+  .article-toc a:hover, .project-caption a:hover, .project-url:hover .project-link-address { color: #956c45; }
 }
 @media (max-width: 1000px) {
   .shell { width: calc(100% - 64px); }
   .intro-inner { gap: 32px; }
   .reading-layout { grid-template-columns: 170px minmax(0, 1fr); gap: 32px; }
-  .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .about-layout { gap: 40px; }
 }
 @media (max-width: 640px) {
@@ -156,8 +151,11 @@ a:focus-visible, button:focus-visible { outline: 2px solid #9b754d; outline-offs
   .section-heading h2 { font-size: 25px; letter-spacing: 0; }
   .section-heading { gap: 12px; margin-bottom: 24px; }
   .section-heading .text-link { font-size: 11px; gap: 8px; white-space: nowrap; }
-  .project-grid { grid-template-columns: 1fr; gap: 32px; }
-  .project-cover { aspect-ratio: 1.7; }
+  .project-card { grid-template-columns: 20px minmax(0, 1fr); gap: 12px; padding-block: 24px; }
+  .project-caption { gap: 12px; }
+  .project-caption h3 { font-size: 21px; }
+  .project-url { grid-template-columns: 40px minmax(0, 1fr) 12px; gap: 8px; }
+  .project-link-address { font-size: 11px; }
   .article-row { grid-template-columns: 1fr 20px; gap: 8px; padding-block: 24px; }
   .article-row time { grid-column: 1 / -1; font-size: 10px; }
   .article-row h3 { font-size: 21px; }
@@ -185,5 +183,5 @@ a:focus-visible, button:focus-visible { outline: 2px solid #9b754d; outline-offs
   html { scroll-behavior: auto; }
   .entrance { animation: none; }
   [data-reveal], [data-reveal-state="pending"] { opacity: 1; transform: none; transition: none; }
-  .text-link span, .article-arrow, .cover-arrow, .project-cover:after, .primary-link, .music-control button { transition: none; }
+  .text-link span, .article-arrow, .project-link-arrow, .primary-link, .music-control button { transition: none; }
 }
