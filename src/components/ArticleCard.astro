@@ -1,65 +1,9 @@
 ---
-import { formatDate } from '../lib/format';
-
-interface Props {
-  id: string;
-  title: string;
-  description: string;
-  pubDate: Date;
-  category?: string | undefined;
-  tags?: string[] | undefined;
-  mood?: string | undefined;
-}
-
-const { id, title, description, pubDate, category, tags = [], mood } = Astro.props;
+interface Props { id: string; title: string; description: string; pubDate: Date; category?: string | undefined; tags?: string[] | undefined; mood?: string | undefined; }
+const { id, title, description, pubDate, category } = Astro.props;
 ---
-
-<article
-  class="spotlight-card p-6 sm:p-7 relative group overflow-hidden transition-all duration-300"
-  data-spotlight
->
-  <div class="flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-[var(--text-secondary)] mb-3">
-    <div class="flex items-center gap-2">
-      <time datetime={pubDate.toISOString()} class="text-[var(--text-secondary)]">
-        {formatDate(pubDate)}
-      </time>
-      {category && (
-        <>
-          <span class="opacity-30">/</span>
-          <span class="px-2 py-0.5 rounded-full text-[10px] bg-[rgba(229,227,220,0.05)] border border-[var(--border-color)] text-[var(--text-primary)]">
-            {category}
-          </span>
-        </>
-      )}
-    </div>
-
-    {mood && (
-      <span class="font-serif italic text-xs text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
-        “{mood}”
-      </span>
-    )}
-  </div>
-
-  <h3 class="text-xl sm:text-2xl font-serif text-[var(--text-primary)] group-hover:text-white transition-colors mb-2.5 leading-snug font-normal flex items-center justify-between gap-2">
-    <a href={`/articles/${id}/`} class="focus:outline-hidden after:absolute after:inset-0" aria-label={title}>
-      {title}
-    </a>
-    <span class="text-xs font-mono text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:translate-x-0.5 transition-transform">
-      →
-    </span>
-  </h3>
-
-  <p class="text-xs sm:text-sm text-[var(--text-secondary)] font-sans leading-relaxed line-clamp-2 mb-4">
-    {description}
-  </p>
-
-  {tags && tags.length > 0 && (
-    <div class="flex flex-wrap gap-1.5 text-[10px] font-mono text-[var(--text-muted)]">
-      {tags.map((tag) => (
-        <span class="px-1.5 py-0.5 rounded-xs bg-[rgba(229,227,220,0.03)] border border-[rgba(229,227,220,0.06)]">
-          #{tag}
-        </span>
-      ))}
-    </div>
-  )}
-</article>
+<a class="article-row" data-reveal href={'/articles/' + id + '/'}>
+  <time datetime={pubDate.toISOString()}>{pubDate.toISOString().slice(0,10).replaceAll('-','.')}</time>
+  <div><span class="category">{category || '随笔'}</span><h3>{title}</h3><p>{description}</p></div>
+  <span class="article-arrow" aria-hidden="true">↗</span>
+</a>

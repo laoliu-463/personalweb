@@ -1,37 +1,15 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { getProjects, mapRepoToCard } from '../../lib/projects';
-
 const repos = await getProjects();
 const projects = repos.map((repo, i) => mapRepoToCard(repo, i + 1));
 ---
-
-<Base title="作品集 — 屌丝" description="2019 — 2026 年间的代码实验与系统工程">
-  <div class="max-w-5xl">
-    <div class="flex justify-between items-baseline border-b border-[var(--border-color)] pb-6 mb-12">
-      <div>
-        <h1 class="font-serif text-3xl sm:text-4xl font-normal text-[var(--text-primary)]">作品集</h1>
-        <p class="text-xs font-mono text-[var(--text-secondary)] mt-1.5">// ALL PROJECTS & LABS ({projects.length})</p>
-      </div>
-      <span class="text-xs font-mono text-[var(--text-secondary)]">2019 — 2026</span>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {
-        projects.map((proj, idx) => (
-          <ProjectCard
-            index={proj.index}
-            title={proj.title}
-            description={proj.description}
-            tags={proj.tags}
-            github={proj.github}
-            demo={proj.demo}
-            year={proj.year}
-            featured={idx === 0 || (idx > 0 && idx % 5 === 0)}
-          />
-        ))
-      }
-    </div>
-  </div>
+<Base title="作品 — 老刘" description="代码实验、工具与持续探索中的项目。">
+  <PageIntro eyebrow="01 / PROJECTS & EXPERIMENTS" title="把想法，做出来。" description="写过的代码，做过的工具，以及还在继续的探索。" />
+  <section class="page-content shell">
+    <div class="section-heading"><div><p class="eyebrow">PROJECT ARCHIVE</p><h2>作品与实验</h2></div><span class="section-count">{projects.length} 个项目</span></div>
+    <div class="project-grid">{projects.map(project => <ProjectCard {...project} />)}</div>
+  </section>
 </Base>

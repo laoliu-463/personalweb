@@ -1,0 +1,52 @@
+---
+interface Props { compact?: boolean; }
+const { compact = false } = Astro.props;
+---
+<figure class:list={['desk-scene', { compact }]} data-desk-scene data-running="false">
+  <div class="scene-viewport">
+    <div class="scene-stage">
+      <img class="scene-image" src="/art/urban-bedroom-empty-v5.webp" srcset="/art/urban-bedroom-empty-v5-mobile.webp 960w, /art/urban-bedroom-empty-v5.webp 1536w" sizes="(max-width: 640px) 100vw, 70vw" width="1536" height="1024" alt="雨夜卧室，窗外是城市灯光，台灯照着书桌上的电脑、咖啡杯和笔记本。" fetchpriority={compact ? 'auto' : 'high'} />
+      <canvas class="rain rain-left" width="320" height="420" aria-hidden="true"></canvas>
+      <canvas class="rain rain-right" width="320" height="420" aria-hidden="true"></canvas>
+      <canvas class="steam" width="240" height="320" aria-hidden="true"></canvas>
+    </div>
+  </div>
+</figure>
+<style>
+  .desk-scene { position: absolute; inset: 0; margin: 0; z-index: 0; pointer-events: none; }
+  .scene-viewport { position: absolute; inset: 0; overflow: hidden; container-type: size; }
+  .scene-stage { position: absolute; width: max(100cqw, 150cqh); height: max(100cqh, 66.666667cqw); left: 50%; top: 55%; transform: translate(-50%, -55%); }
+  .scene-image { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .rain { position: absolute; top: 0; pointer-events: none; }
+  .rain-left { left: 0; width: 22.8%; height: 49.1%; }
+  .rain-right { left: 24.9%; width: 22.8%; height: 49.1%; clip-path: polygon(0 0, 100% 0, 100% 88%, 97% 88%, 97% 94%, 94% 94%, 94% 100%, 0 100%); }
+  .steam { position: absolute; left: 53.5%; top: 57.2%; width: 6%; height: 10%; transform: translate(-50%, -100%); }
+  .steam[hidden] { display: none; }
+  @media (max-width: 1000px) and (min-width: 641px) { .scene-stage { left: 52%; top: 50%; transform: translate(-52%, -50%); } }
+  @media (max-width: 640px) {
+    .scene-viewport { top: 470px; bottom: auto; aspect-ratio: 3 / 2; }
+    .scene-stage { width: 100%; height: 100%; left: 0; top: 0; transform: none; }
+  }
+  .compact .scene-viewport { inset: 0; aspect-ratio: auto; }
+  .compact .scene-stage { width: 100%; height: 100%; left: 0; top: 0; transform: none; }
+</style>
+<script>
+  import { createDeskSteam } from '../lib/desk-steam';
+  import { createDeskRain } from '../lib/desk-rain';
+  const scene = document.querySelector<HTMLElement>('[data-desk-scene]');
+  const canvas = scene?.querySelector<HTMLCanvasElement>('.steam');
+  if (scene && canvas) {
+    const steam = createDeskSteam(canvas);
+    const rain = createDeskRain(Array.from(scene.querySelectorAll<HTMLCanvasElement>('canvas.rain')));
+    const sync = () => {
+      const running = !document.hidden;
+      scene.dataset.running = String(running);
+      steam?.setRunning(running);
+      rain.setRunning(running);
+    };
+    document.addEventListener('visibilitychange', sync);
+    window.addEventListener('pagehide', () => { steam?.setRunning(false); rain.setRunning(false); });
+    window.addEventListener('pageshow', sync);
+    sync();
+  }
+</script>
