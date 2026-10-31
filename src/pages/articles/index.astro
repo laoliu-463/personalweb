@@ -1,79 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import { getSortedArticles } from '../../lib/articles';
-
 const articles = await getSortedArticles();
-const techPosts = articles.filter((a) => a.data.category !== '随笔');
-const essays = articles.filter((a) => a.data.category === '随笔');
+const groups = [{ title: '技术与思考', label: 'ENGINEERING & IDEAS', posts: articles.filter(a => a.data.category !== '随笔') }, { title: '日常随笔', label: 'FRAGMENTS OF LIFE', posts: articles.filter(a => a.data.category === '随笔') }];
 ---
-
-<Base title="沉淀的文字 — 屌丝" description="在湿润夜色与灯光下写下的思考与工程记录">
-  <div class="max-w-5xl mx-auto">
-    <div class="flex justify-between items-baseline border-b border-[var(--border-color)] pb-6 mb-12">
-      <div>
-        <h1 class="font-serif text-3xl sm:text-4xl font-normal text-[var(--text-primary)]">沉淀的文字</h1>
-        <p class="text-xs font-mono text-[var(--text-secondary)] mt-1.5">// ARCHIVES & ESSAYS ({articles.length})</p>
-      </div>
-      <span class="text-xs font-mono text-[var(--text-secondary)]">2023 — 2026</span>
-    </div>
-
-    <div class="space-y-16">
-      <!-- 技术博客区 -->
-      <section>
-        <div class="flex justify-between items-baseline border-b border-[var(--border-color)] pb-3 mb-6">
-          <div class="flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-[var(--text-primary)]"></span>
-            <h2 class="font-serif text-xl sm:text-2xl font-normal text-[var(--text-primary)]">技术博客</h2>
-          </div>
-          <span class="text-xs font-mono text-[var(--text-secondary)]">{techPosts.length} 篇</span>
-        </div>
-        {techPosts.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {techPosts.map((article) => (
-              <ArticleCard
-                id={article.id}
-                title={article.data.title}
-                description={article.data.description}
-                pubDate={article.data.pubDate}
-                category={article.data.category}
-                tags={article.data.tags}
-                mood={article.data.mood}
-              />
-            ))}
-          </div>
-        ) : (
-          <p class="text-xs font-mono text-[var(--text-secondary)]">// 还没有技术博客，等你写下第一篇。</p>
-        )}
-      </section>
-
-      <!-- 随笔区 -->
-      <section>
-        <div class="flex justify-between items-baseline border-b border-[var(--border-color)] pb-3 mb-6">
-          <div class="flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-[var(--wine)]"></span>
-            <h2 class="font-serif text-xl sm:text-2xl font-normal text-[var(--text-primary)]">随笔</h2>
-          </div>
-          <span class="text-xs font-mono text-[var(--text-secondary)]">{essays.length} 篇</span>
-        </div>
-        {essays.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {essays.map((article) => (
-              <ArticleCard
-                id={article.id}
-                title={article.data.title}
-                description={article.data.description}
-                pubDate={article.data.pubDate}
-                category={article.data.category}
-                tags={article.data.tags}
-                mood={article.data.mood}
-              />
-            ))}
-          </div>
-        ) : (
-          <p class="text-xs font-mono text-[var(--text-secondary)]">// 还没有随笔。</p>
-        )}
-      </section>
-    </div>
-  </div>
+<Base title="文字 — 老刘" description="技术记录、个人思考与日常随笔。">
+  <PageIntro eyebrow="02 / WRITING & NOTES" title="一些文字，一些思考。" description="把做过的事记下来，也把暂时想不明白的事留在这里。" />
+  <div class="page-content shell">{groups.map(group => <section class="archive-group"><div class="archive-group-heading"><div><p class="eyebrow">{group.label}</p><h2 style="margin-top:12px">{group.title}</h2></div><span class="section-count">{group.posts.length} 篇</span></div>{group.posts.length ? group.posts.map(post => <ArticleCard id={post.id} {...post.data} />) : <p class="project-description">还没有文章。</p>}</section>)}</div>
 </Base>

@@ -1,0 +1,11 @@
+---
+import DeskScene from './DeskScene.astro';
+interface Props { title: string; eyebrow: string; description: string; }
+const { title, eyebrow, description } = Astro.props;
+---
+<section class="page-intro">
+  <div class="intro-inner shell">
+    <div class="entrance"><p class="eyebrow">{eyebrow}</p><h1>{title}</h1><p class="intro-description">{description}</p><slot /></div>
+    <div class="intro-scene-group"><div class="intro-scene"><DeskScene compact /></div><div class="intro-note"><span>一张书桌，一些日常。</span><span>DESK NOTES</span></div></div>
+  </div>
+</section>

@@ -1,0 +1,23 @@
+<div class="music-control">
+  <audio id="bgm-audio" src="/bgm.mp3" loop preload="none"></audio>
+  <button id="music-toggle" type="button" aria-pressed="false"><span class="music-icon" aria-hidden="true">♫</span><span id="music-label">听一会儿</span><span class="music-status" aria-hidden="true"></span></button>
+  <span id="music-error" class="music-error" role="status"></span>
+</div>
+<script>
+  const audio = document.querySelector<HTMLAudioElement>('#bgm-audio');
+  const button = document.querySelector<HTMLButtonElement>('#music-toggle');
+  const label = document.querySelector('#music-label');
+  const error = document.querySelector('#music-error');
+  if (audio && button && label && error) {
+    audio.volume = 0.25;
+    button.addEventListener('click', async () => {
+      error.textContent = '';
+      if (audio.paused) {
+        try { await audio.play(); } catch { error.textContent = '音乐暂时无法播放，请稍后再试。'; }
+      } else audio.pause();
+    });
+    const sync = () => { button.setAttribute('aria-pressed', String(!audio.paused)); label.textContent = audio.paused ? '听一会儿' : '暂停音乐'; };
+    audio.addEventListener('play', sync);
+    audio.addEventListener('pause', sync);
+  }
+</script>
